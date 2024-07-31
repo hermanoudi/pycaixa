@@ -7,6 +7,11 @@ setup(
     description="Sistema de Fluxo de Caixa",
     author="Hermano Flávio de Moura",
     packages=find_packages(),
+    entry_points={
+        "console_scripts": [
+            "moura = mouracx.__main__:main"
+        ]
+    }
 )
 
 

@@ -1,1 +1,2 @@
-print("Executing entry point for moura caixa")
+def main():
+    print("Executing mouracx from entry point")
