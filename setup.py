@@ -8,3 +8,5 @@ setup(
     author="Hermano Flávio de Moura",
     packages=find_packages(),
 )
+
+
