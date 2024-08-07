@@ -31,6 +31,7 @@ setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     author="Hermano Flávio de Moura",
+    python_requires=">=3.9",
     packages=find_packages(),
     entry_points={
         "console_scripts": [
