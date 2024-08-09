@@ -21,7 +21,7 @@ def test_load_positive_call_load_command():
 def test_load_negative_call_load_command(wrong_command):
     """test command load"""
     with pytest.raises(CalledProcessError) as error:
-        out = (
+        out = (  # noqa
             check_output(
                 ["mouracx", wrong_command, "integration/assets/extrato.csv"]
             )
