@@ -27,13 +27,13 @@ jobs:
       - name: Install Project
         run: pip install '.[test]'
       # - name: Typing
-      #   run: mypy --ignore-missing-imports dundie
+      #   run: mypy --ignore-missing-imports mouracx
       - name: Look for style errors
         run: pflake8
       - name: Check for importing style
         run: isort --profile=black --check --diff mouracx tests integration
       - name: Look for auto format errors
-        run: black --check --diff dundie tests integration
+        run: black --check --diff mouracx tests integration
 
 
   tests:
