@@ -1,5 +1,5 @@
 import argparse
-from mouracx.core import load
+from mouracx.core import load # noqa
 
 
 def main():
