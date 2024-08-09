@@ -1,5 +1,6 @@
 import argparse
-from mouracx.core import load # noqa
+
+from mouracx.core import load  # noqa
 
 
 def main():
@@ -12,16 +13,13 @@ def main():
         type=str,
         help="The subcommand to run",
         choices=("load", "show", "add"),
-        default="help"
+        default="help",
     )
     parser.add_argument(
-        "filepath",
-        type=str,
-        help="File path to load",
-        default=None
+        "filepath", type=str, help="File path to load", default=None
     )
 
     args = parser.parse_args()
     print(*globals()[args.subcommand](args.filepath))
 
-    #print("Executing mouracx from entry point")
+    # print("Executing mouracx from entry point")

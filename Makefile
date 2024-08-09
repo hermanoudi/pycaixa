@@ -18,6 +18,10 @@ test:
 lint:
 	@.venv/bin/pflake8
 
+fmt:
+	@.venv/bin/isort mouracx test integration
+	@.venv/bin/black mouracx tests integration
+
 watch:
 	ls **/*.py | entr pytest
 
