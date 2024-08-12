@@ -1,18 +1,19 @@
-from subprocess import CalledProcessError, check_output
-
 import pytest
+from click.testing import CliRunner
+
+from mouracx.cli import load, main
+
+from .constants import EXTRACT_FILE
+
+cmd = CliRunner()
 
 
 @pytest.mark.integration
 @pytest.mark.medium
 def test_load_positive_call_load_command():
     """test command load"""
-    out = (
-        check_output(["mouracx", "load", "integration/assets/extrato.csv"])
-        .decode("UTF-8")
-        .split("\n")
-    )
-    assert len(out) > 0
+    out = cmd.invoke(load, EXTRACT_FILE)
+    assert "Moura Fluxo de Caixa" in out.output
 
 
 @pytest.mark.integration
@@ -20,12 +21,6 @@ def test_load_positive_call_load_command():
 @pytest.mark.parametrize("wrong_command", ["loady", "carrega", "start"])
 def test_load_negative_call_load_command(wrong_command):
     """test command load"""
-    with pytest.raises(CalledProcessError) as error:
-        out = (  # noqa
-            check_output(
-                ["mouracx", wrong_command, "integration/assets/extrato.csv"]
-            )
-            .decode("UTF-8")
-            .split("\n")
-        )
-        assert "non-zero" in str(error.getrepr())
+    out = cmd.invoke(main, wrong_command, EXTRACT_FILE)
+    assert out.exit_code != 0
+    assert f"No such command '{wrong_command}'." in out.output
