@@ -13,7 +13,7 @@ ipython:
 	@.venv/bin/ipython
 
 test:
-	@.venv/bin/pytest -s tests/
+	@.venv/bin/pytest -s -vv --forked
 
 lint:
 	@.venv/bin/pflake8
@@ -23,7 +23,7 @@ fmt:
 	@.venv/bin/black mouracx tests integration
 
 watch:
-	ls **/*.py | entr pytest
+	ls **/*.py | entr pytest --forked
 
 clean:            ## Clean unused files.
 	@find ./ -name '*.pyc' -exec rm -f {} \;

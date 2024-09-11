@@ -1,4 +1,5 @@
 pytest
+pytest-forked
 flake8
 pyproject_flake8
 black

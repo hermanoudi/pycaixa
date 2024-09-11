@@ -33,14 +33,14 @@ def load(filepath):
     - Loads to database
     """
     table = Table(title="Moura Fluxo de Caixa")
-    headers = ["data", "trasacao", "valor", "tipo"]
+    headers = ["data", "trasacao", "valor", "tipo", "created"]
 
     for header in headers:
         table.add_column(header, style="magenta")
 
     result = core.load(filepath)
-    for transaction in result:
-        table.add_row(*[field.strip() for field in transaction.split(",")])
+    for item in result:
+        table.add_row(*[str(value) for value in item.values()])
 
     console = Console()
     console.print(table)
