@@ -2,7 +2,7 @@ import pytest
 
 from mouracx.core import load
 
-from .constants import EXTRACT_FILE
+from mouracx.utils.constants import EXTRACT_FILE
 
 
 @pytest.mark.unit

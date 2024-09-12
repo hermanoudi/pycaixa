@@ -33,7 +33,7 @@ def load(filepath):
     - Loads to database
     """
     table = Table(title="Moura Fluxo de Caixa")
-    headers = ["data", "trasacao", "valor", "tipo", "created"]
+    headers = ["DATA", "TRANSACAO", "VALOR", "TIPO"]
 
     for header in headers:
         table.add_column(header, style="magenta")
@@ -41,6 +41,29 @@ def load(filepath):
     result = core.load(filepath)
     for item in result:
         table.add_row(*[str(value) for value in item.values()])
+
+    console = Console()
+    console.print(table)
+
+@main.command()
+def show():
+    """Shows all Movements at screen.
+
+    ## Features
+    - Show all movements in database
+    """
+
+    table = Table(title="Moura Fluxo de Caixa")
+    headers = ["DATA", "TRANSACAO", "VALOR", "TIPO"]
+    
+    for header in headers:
+        table.add_column(header, style="green")
+
+    movements = core.list_movements()
+
+    for item in movements:
+        table.add_row(str(item['data']), str(item['transacao']), str(item['valor']), str(item['tipo']))
+        # table.add_row(*[str(value) for value in item.values()])
 
     console = Console()
     console.print(table)

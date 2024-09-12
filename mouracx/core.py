@@ -1,9 +1,13 @@
 """Core module of mouracx"""
+import csv
 
-from csv import reader
-
-from mouracx.database import add_movement, commit, connect
+from datetime import date
+from decimal import Decimal
+from mouracx.database import get_session
 from mouracx.utils.log import get_logger
+from mouracx.utils.db import add_movement, list_all_movements
+from mouracx.models import Movement
+from typing import List
 
 log = get_logger()
 
@@ -14,21 +18,32 @@ def load(filepath):
     >>> len(load('assets/extrato.csv'))
     2
     """
+    movements = []
     try:
-        csv_data = reader(open(filepath))
-        
+        with get_session() as session:
+            with open(filepath, mode='r', newline='') as file:
+                reader = csv.DictReader(file)
+
+                for row in reader:
+                    # Convertendo a data do CSV para o formato de data
+                    data = date.fromisoformat(row['data'])
+                    valor = Decimal(row['valor'])
+                    instance = Movement(data=data, transacao=row['transacao'], valor=valor, tipo=row['tipo'])
+                    movement = add_movement(session, instance)
+                    returndata = movement.dict(exclude={"id"})
+                    movements.append(returndata)
+                session.commit()
     except FileNotFoundError as e:
         log.error(str(e))
         raise e
-    db = connect()
+
+    return movements
+
+
+def list_movements() -> List[Movement]:
     movements = []
-    headers = ["data", "transacao", "valor", "tipo"]
-    for line in csv_data:
-        movement_data = dict(zip(headers, [item.strip() for item in line]))
-        movement, created = add_movement(db, movement_data)
-        return_data = movement.copy()
-        return_data["created"] = created
-        movements.append(return_data)
-    
-    commit(db)
+
+    for mov in list_all_movements():
+        returndata = mov.dict(exclude={"id"})
+        movements.append(returndata)
     return movements
