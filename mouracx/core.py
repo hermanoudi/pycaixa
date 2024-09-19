@@ -9,9 +9,9 @@ from os import name
 
 from sqlalchemy import Transaction
 from mouracx.database import get_session
-from mouracx.utils.db import save_account, find_account_by_name, find_category_by_name, save_category, save_transaction
+from mouracx.utils.db import save_account, find_account_by_name, find_category_by_name, save_category, save_transaction, save_transaction_category
 from mouracx.utils.log import get_logger
-from mouracx.models import Account, Category, Transaction
+from mouracx.models import Account, Category, Transaction, TransactionCategory
 # from mouracx.utils.db import add_movement, list_all_movements
 # from mouracx.models import Movement
 from typing import List
@@ -94,15 +94,26 @@ def add_category(name) -> Category:
 
 
 #Transaction
-def add_transaction(account_name, date_transaction, description, value_transction, debit_credit, balance) -> Transaction:
+def add_transaction(account_name, date_transaction, category_name, description, value_transction, debit_credit, balance) -> Transaction:
     """Save transaction to database"""
     with get_session() as session:
         account = find_account_by_name(account_name)
+
         if account is None:
-            raise ValueError("Account invalid!")
+            raise ValueError("Account is invalid!")
+        
+        category = find_category_by_name(category_name)
+        if category is None:
+            raise ValueError("Category is invalid!")
+        
         #TODO: arrumar uma forma de não perder o balance para evitar concorrencia
         instance = Transaction(account_id=account.account_id, transaction_date=date_transaction, description=description, amount=Decimal(value_transction), debit_credit=debit_credit, balance=Decimal(balance))
         transaction = save_transaction(session, instance)
+        session.commit()
+        
+        transaction_category = TransactionCategory(transaction_id=transaction.transaction_id, category_id=category.category_id)
+        save_transaction_category(session, transaction_category)
+
         return_data = transaction.dict(exclude={"transaction_id"})
         session.commit()
         return return_data

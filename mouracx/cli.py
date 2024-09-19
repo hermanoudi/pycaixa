@@ -118,11 +118,12 @@ def add_category(name):
 
 @main.command()
 @click.argument("account_name", required=True)
+@click.option("--category_name", required=False)
 @click.option("--description", required=False)
 @click.option("--value_transaction", required=False)
 @click.option("--debit_credit", required=False)
 @click.option("--balance", required=False)
-def add_transaction(account_name, description, value_transaction, debit_credit, balance):
+def add_transaction(account_name, category_name, description, value_transaction, debit_credit, balance):
     """Register bank transaction.
 
     ## Features
@@ -136,7 +137,7 @@ def add_transaction(account_name, description, value_transaction, debit_credit, 
     
     created_at = datetime.now()
     ammount = Decimal(value_transaction)
-    result = core.add_transaction(account_name, created_at, description, ammount, debit_credit, balance)
+    result = core.add_transaction(account_name, created_at, category_name, description, ammount, debit_credit, balance)
     print(result)
     table.add_row(str(result['account_id']), str(result['transaction_date'].strftime(DATEFMT)), created_at.strftime(DATEFMT), str(result['amount']), str(result['debit_credit']), str(result['balance']) , created_at.strftime(DATEFMT))
 

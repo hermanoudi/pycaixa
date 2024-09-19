@@ -2,7 +2,7 @@ from os import name
 from unicodedata import category
 from sqlalchemy import Transaction
 from sqlmodel import Session, select, create_engine
-from mouracx.models import Account, Category
+from mouracx.models import Account, Category, TransactionCategory
 from mouracx.settings import SQL_CON_STRING
 from typing import List
 
@@ -79,3 +79,8 @@ def list_transactions() -> List[Transaction]:
 #     with Session(engine) as session:
 #         sql = select(Category).where(Category.category_name == name)
 #         return session.exec(sql).first()
+
+def save_transaction_category(session: Session, transaction_category: TransactionCategory):
+    """saves linked table to transaction and category"""
+    session.add(transaction_category)
+    return transaction_category
