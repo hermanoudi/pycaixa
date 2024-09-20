@@ -45,6 +45,6 @@ session.add(movement)
 
 # session.commit()
 
-results = session.query(Bala nce)
+results = session.query(Balance)
 for result in results:
     print(result.value, result.person.name)

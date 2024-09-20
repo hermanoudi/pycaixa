@@ -26,7 +26,7 @@ def read_requirements(path):
 
 setup(
     name="mouracx",
-    version="0.0.1",
+    version="0.1.0",
     description="Sistema de Fluxo de Caixa",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",

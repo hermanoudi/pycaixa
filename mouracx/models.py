@@ -1,9 +1,10 @@
 from datetime import date
 from typing import Optional, List
-from pydantic import condecimal
-
+from pydantic import ValidationInfo, condecimal
 from sqlmodel import Relationship, SQLModel, Field
 
+class InvalidTypeAccountError(Exception):
+    ...
 
 
 # Modelo de Relação entre Transações e Categorias (opcional)
@@ -15,7 +16,7 @@ class TransactionCategory(SQLModel, table=True):
 class Account(SQLModel, table=True):
     account_id: Optional[int] = Field(default=None, primary_key=True)
     account_name: str
-    account_type: str
+    account_type: str = Field(..., description="The account types valids are Conta Corrente ou Poupança")
     currency: str
 
     transaction: "Transaction" = Relationship(back_populates="account")

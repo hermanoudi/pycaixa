@@ -3,18 +3,13 @@ import csv
 
 from datetime import date
 from decimal import Decimal
-from gettext import find
-from locale import currency
-from os import name
 
-from sqlalchemy import Transaction
 from mouracx.database import get_session
 from mouracx.utils.db import save_account, find_account_by_name, find_category_by_name, save_category, save_transaction, save_transaction_category
 from mouracx.utils.log import get_logger
-from mouracx.models import Account, Category, Transaction, TransactionCategory
-# from mouracx.utils.db import add_movement, list_all_movements
-# from mouracx.models import Movement
+from mouracx.models import Account, Category, Transaction, TransactionCategory, InvalidTypeAccountError
 from typing import List
+from pydantic import ValidationError
 
 log = get_logger()
 
@@ -60,20 +55,25 @@ log = get_logger()
 def register_account(name, type, currency) -> Account:
     """ Register account to manager transactions"""
     with get_session() as session:
-        name_account_for_register = name
-        account = get_account_by_name(str(name_account_for_register))
-        if account is not None:
-            raise ValueError("Account already exist!")
+        try:
+            name_account_for_register = name
+            account = get_account_by_name(str(name_account_for_register))
+            if account is not None:
+                raise ValueError("Account already exist!")
 
-        instance = Account(account_name=name, account_type=type, currency=currency)
-        account = add_account(session, instance)
-        return_data = account.dict(exclude={"account_id"})
-        session.commit()
-        return return_data
+            instance = Account(account_name=name, account_type=type, currency=currency)
+            account = save_account(session, instance)
+            return_data = account.model_dump(exclude={"account_id"})
+            session.commit()
+            return return_data
+        except ValidationError as e:
+            log.error("Invalid type account")
 
 
 def get_account_by_name(name) -> Account:
     """ Find account by name"""
+    if name == "" or len(name) < 3:
+        raise ValueError("Name Account should be filled!")
     account = find_account_by_name(name)
     return account
 
@@ -110,7 +110,7 @@ def add_transaction(account_name, date_transaction, category_name, description, 
         instance = Transaction(account_id=account.account_id, transaction_date=date_transaction, description=description, amount=Decimal(value_transction), debit_credit=debit_credit, balance=Decimal(balance))
         transaction = save_transaction(session, instance)
         session.commit()
-        
+
         transaction_category = TransactionCategory(transaction_id=transaction.transaction_id, category_id=category.category_id)
         save_transaction_category(session, transaction_category)
 

@@ -1,25 +1,9 @@
-from os import name
-from unicodedata import category
-from sqlalchemy import Transaction
 from sqlmodel import Session, select, create_engine
-from mouracx.models import Account, Category, TransactionCategory
+from mouracx.models import Account, Category, TransactionCategory, Transaction
 from mouracx.settings import SQL_CON_STRING
 from typing import List
 
 engine = create_engine(SQL_CON_STRING, echo=False)
-
-#TODO: Alterar para transaction
-# def add_movement(session: Session, instance: Movement):
-#     """Saves movement data to database"""
-#     session.add(instance)
-#     return instance
-
-# def list_all_movements():
-#     with Session(engine) as session:
-#         sql = select(Movement)
-#         movements = session.exec(sql).all()
-#     return movements
-
 
 # account
 def save_account(session: Session, instance: Account):
@@ -74,11 +58,6 @@ def list_transactions() -> List[Transaction]:
         transaction = session.exec(sql).all()
     return transaction
 
-
-# def find_transaction_by_name(name) -> Account:
-#     with Session(engine) as session:
-#         sql = select(Category).where(Category.category_name == name)
-#         return session.exec(sql).first()
 
 def save_transaction_category(session: Session, transaction_category: TransactionCategory):
     """saves linked table to transaction and category"""
