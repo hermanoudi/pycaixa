@@ -3,17 +3,11 @@
 import csv
 from datetime import date
 from decimal import Decimal
-from typing import List
 
 from pydantic import ValidationError
 
 from mouracx.database import get_session
-from mouracx.models import (
-    Account,
-    Category,
-    Transaction,
-    TransactionCategory,
-)
+from mouracx.models import Account, Category, Transaction, TransactionCategory
 from mouracx.utils.db import (
     find_account_by_name,
     find_category_by_name,
@@ -36,29 +30,42 @@ def load(filepath):
     movements = []
     try:
         with get_session() as session:
-            with open(filepath, mode='r', newline='') as file:
+            with open(filepath, mode="r", newline="") as file:
                 reader = csv.DictReader(file)
 
                 for row in reader:
                     # Convertendo a data do CSV para o formato de data
-                    data = date.fromisoformat(row['date_transaction'])
-                    amount_transaction = Decimal(row['value_transaction'])
+                    data = date.fromisoformat(row["date_transaction"])
+                    amount_transaction = Decimal(row["value_transaction"])
 
-                    account = find_account_by_name(row['account'])
+                    account = find_account_by_name(row["account"])
                     if account is None:
-                        raise ValueError(f"Account not found {row['account']}!")
+                        raise ValueError(
+                            f"Account not found {row['account']}!"
+                        )
 
-                    instance = Transaction(account_id=account.account_id, transaction_date=data, description=row['description'], amount=amount_transaction, debit_credit=row['debit_credit'])
-                    category = find_category_by_name(row['category'])
+                    instance = Transaction(
+                        account_id=account.account_id,
+                        transaction_date=data,
+                        description=row["description"],
+                        amount=amount_transaction,
+                        debit_credit=row["debit_credit"],
+                    )
+                    category = find_category_by_name(row["category"])
                     if category is None:
-                        raise ValueError(f"Category is invalida for transaction_date {data}")
-                    
+                        raise ValueError(
+                            f"Category is invalida for transaction_date {data}"
+                        )
+
                     movement = save_transaction(session, instance)
                     session.commit()
 
-                    transaction_category = TransactionCategory(transaction_id=movement.transaction_id, category_id=category.category_id)
+                    transaction_category = TransactionCategory(
+                        transaction_id=movement.transaction_id,
+                        category_id=category.category_id,
+                    )
                     save_transaction_category(session, transaction_category)
-                    
+
                     returndata = movement.dict(exclude={"transaction_id"})
                     movements.append(returndata)
                     print(movements)
@@ -96,7 +103,7 @@ def register_account(name, type, currency) -> Account:
             return_data = account.model_dump(exclude={"account_id"})
             session.commit()
             return return_data
-        except ValidationError as e:
+        except ValidationError:
             log.error("Invalid type account")
 
 

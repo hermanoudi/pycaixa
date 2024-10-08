@@ -45,7 +45,7 @@ def load(filepath):
     result = core.load(filepath)
     for item in result:
         print(item)
-        #table.add_row(*[str(value) for value in item.values()])
+        # table.add_row(*[str(value) for value in item.values()])
         table.add_row(
             str(item["transaction_date"].strftime(DATEFMT_DATE)),
             str(item["account_id"]),
