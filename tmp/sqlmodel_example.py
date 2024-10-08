@@ -1,21 +1,23 @@
 from typing import Optional
-from sqlmodel import SQLModel, Field, create_engine, Session, select, Relationship
+from sqlmodel import (SQLModel, Field, create_engine,
+                      Session, select, Relationship)
 
 # we have to monkey patch this attributes
 # https://github.com/tiangolo/sqlmodel/issues/189
-import sqlmodel
 from sqlmodel.sql.expression import Select, SelectOfScalar
-SelectOfScalar.inherit_cache = True # type: ignore
-Select.inherit_cache = True # type: ignore
+SelectOfScalar.inherit_cache = True  # type: ignore
+Select.inherit_cache = True  # type: ignore
 
 # Base (declarative_base)
 # BaseModel (pydantic)
+
 
 class Person(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
 
     balance: "Balance" = Relationship(back_populates="person")
+
 
 class Balance(SQLModel, table=True):
 
@@ -56,7 +58,6 @@ with Session(engine) as session:
     # results = session.exec(sql)
     # for balance in results:
     #     print(f"{balance.person.name} tem {balance.value} pontos!")
-
 
     # Exemplo de Join
     # sql = select(Person, Balance).where(Balance.person_id == Person.id)

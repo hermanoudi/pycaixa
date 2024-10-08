@@ -3,7 +3,8 @@ from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 
 
 class Base:
-    __allow_unmapped__ = True    
+    __allow_unmapped__ = True
+
 
 Base = declarative_base(cls=Base)
 
@@ -15,7 +16,8 @@ class Person(Base):
     name = Column(String(255))
 
     def __str__(self):
-        return(self.name.upper())
+        return (self.name.upper())
+
 
 class Balance(Base):
     __tablename__ = "balance"
@@ -25,6 +27,7 @@ class Balance(Base):
     person_id = Column(Integer, ForeignKey(Person.id))
 
     person = relationship('Person', foreign_keys='Balance.person_id')
+
 
 engine = create_engine("sqlite:////tmp/database.db")
 

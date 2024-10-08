@@ -1,5 +1,7 @@
 pytest
 pytest-forked
+coverage
+pytest-cov
 flake8
 pyproject_flake8
 black

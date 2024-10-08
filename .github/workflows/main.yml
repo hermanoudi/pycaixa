@@ -52,4 +52,4 @@ jobs:
       - name: Install Project
         run: pip install '.[test]'
       - name: Run tests
-        run: pytest -v --junitxml=test-result.xml
+        run: pytest -v --cov=mouracx --junitxml=test-result.xml

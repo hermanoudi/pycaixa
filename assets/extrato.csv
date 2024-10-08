@@ -1,3 +1,4 @@
-data,transacao,valor,tipo,currency
-2024-07-30,VALFLUID ACESSORIOS IN USUBERLANDIA,-200.00,Pagamento,USD
-2024-07-30,FAST UBERLANDIA BR,-115.80,Pagamento,BLR
+date_transaction,account,description,value_transaction,type_transaction,debit_credit,category
+2024-09-22,Conta Itaú,Combustível Diesel,500.30,Pagamento,Débito,Combustível
+2024-09-25,Conta Itaú,Funcionario,700.00,Pagamento,Débito,Funcionário
+2024-09-23,Conta Itaú,Recebimento Obra xpto,2500.30,Recebimento,Crédito,Recebimento Obra

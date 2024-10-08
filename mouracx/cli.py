@@ -1,12 +1,13 @@
+from datetime import datetime
+from decimal import Decimal
+
 import pkg_resources
 import rich_click as click
 from rich.console import Console
 from rich.table import Table
-from datetime import datetime
-from decimal import Decimal
 
 from mouracx import core
-from mouracx.settings import DATEFMT
+from mouracx.settings import DATEFMT, DATEFMT_DATE
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = True
@@ -36,17 +37,26 @@ def load(filepath):
     - Loads to database
     """
     table = Table(title="Moura Fluxo de Caixa")
-    headers = ["DATA", "TRANSACAO", "VALOR", "TIPO", "CURRENCY"]
+    headers = ["DATE", "ACCOUNT", "DESCRIPTION", "AMOUNT", "DEBIT-CREDIT"]
 
     for header in headers:
         table.add_column(header, style="magenta")
 
     result = core.load(filepath)
     for item in result:
-        table.add_row(*[str(value) for value in item.values()])
+        print(item)
+        #table.add_row(*[str(value) for value in item.values()])
+        table.add_row(
+            str(item["transaction_date"].strftime(DATEFMT_DATE)),
+            str(item["account_id"]),
+            str(item["description"]),
+            str(item["amount"]),
+            str(item["debit_credit"]),
+        )
 
     console = Console()
     console.print(table)
+
 
 @main.command()
 def show():
@@ -58,18 +68,24 @@ def show():
 
     table = Table(title="Moura Fluxo de Caixa")
     headers = ["DATA", "TRANSACAO", "VALOR", "TIPO", "CURRENCY"]
-    
     for header in headers:
         table.add_column(header, style="green")
 
     movements = core.list_movements()
 
     for item in movements:
-        table.add_row(str(item['data']), str(item['transacao']), str(item['valor']), str(item['tipo']), str(item['currency']))
+        table.add_row(
+            str(item["data"]),
+            str(item["transacao"]),
+            str(item["valor"]),
+            str(item["tipo"]),
+            str(item["currency"]),
+        )
         # table.add_row(*[str(value) for value in item.values()])
 
     console = Console()
     console.print(table)
+
 
 @main.command()
 @click.argument("name", required=True)
@@ -89,7 +105,12 @@ def add_account(name, type, currency):
 
     result = core.register_account(name, type, currency="BRL")
     created_at = datetime.now()
-    table.add_row(str(result['account_name']), str(result['account_type']), str(result['currency']), created_at.strftime(DATEFMT))
+    table.add_row(
+        str(result["account_name"]),
+        str(result["account_type"]),
+        str(result["currency"]),
+        created_at.strftime(DATEFMT),
+    )
 
     console = Console()
     console.print(table)
@@ -108,13 +129,13 @@ def add_category(name):
 
     for header in headers:
         table.add_column(header, style="green")
-    
     created_at = datetime.now()
     result = core.add_category(name)
-    table.add_row(str(result['category_name']), created_at.strftime(DATEFMT))
+    table.add_row(str(result["category_name"]), created_at.strftime(DATEFMT))
 
     console = Console()
     console.print(table)
+
 
 @main.command()
 @click.argument("account_name", required=True)
@@ -123,23 +144,52 @@ def add_category(name):
 @click.option("--value_transaction", required=False)
 @click.option("--debit_credit", required=False)
 @click.option("--balance", required=False)
-def add_transaction(account_name, category_name, description, value_transaction, debit_credit, balance):
+def add_transaction(
+    account_name,
+    category_name,
+    description,
+    value_transaction,
+    debit_credit,
+    balance,
+):
     """Register bank transaction.
 
     ## Features
     - Add banck transaction
     """
     table = Table(title="Moura Fluxo de Caixa")
-    headers = ["ACCOUNT", "DATE", "DESCRIPTION", "AMMOUNT", "DEBIT_CREDIT", "BALANCE"]
+    headers = [
+        "ACCOUNT",
+        "DATE",
+        "DESCRIPTION",
+        "AMMOUNT",
+        "DEBIT_CREDIT",
+        "BALANCE",
+    ]
 
     for header in headers:
         table.add_column(header, style="green")
-    
     created_at = datetime.now()
     ammount = Decimal(value_transaction)
-    result = core.add_transaction(account_name, created_at, category_name, description, ammount, debit_credit, balance)
+    result = core.add_transaction(
+        account_name,
+        created_at,
+        category_name,
+        description,
+        ammount,
+        debit_credit,
+        balance,
+    )
     print(result)
-    table.add_row(str(result['account_id']), str(result['transaction_date'].strftime(DATEFMT)), created_at.strftime(DATEFMT), str(result['amount']), str(result['debit_credit']), str(result['balance']) , created_at.strftime(DATEFMT))
+    table.add_row(
+        str(result["account_id"]),
+        str(result["transaction_date"].strftime(DATEFMT)),
+        created_at.strftime(DATEFMT),
+        str(result["amount"]),
+        str(result["debit_credit"]),
+        str(result["balance"]),
+        created_at.strftime(DATEFMT),
+    )
 
     console = Console()
     console.print(table)

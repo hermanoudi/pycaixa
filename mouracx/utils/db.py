@@ -1,9 +1,12 @@
-from sqlmodel import Session, select, create_engine
-from mouracx.models import Account, Category, TransactionCategory, Transaction
-from mouracx.settings import SQL_CON_STRING
 from typing import List
 
+from sqlmodel import Session, create_engine, select
+
+from mouracx.models import Account, Category, Transaction, TransactionCategory
+from mouracx.settings import SQL_CON_STRING
+
 engine = create_engine(SQL_CON_STRING, echo=False)
+
 
 # account
 def save_account(session: Session, instance: Account):
@@ -25,7 +28,6 @@ def find_account_by_name(name) -> Account:
         return session.exec(sql).first()
 
 
-
 # category
 def save_category(session: Session, instance: Category):
     """saves category data to database"""
@@ -45,6 +47,7 @@ def find_category_by_name(name) -> Account:
         sql = select(Category).where(Category.category_name == name)
         return session.exec(sql).first()
 
+
 # transaction
 def save_transaction(session: Session, instance: Transaction):
     """saves transaction data to database"""
@@ -59,7 +62,9 @@ def list_transactions() -> List[Transaction]:
     return transaction
 
 
-def save_transaction_category(session: Session, transaction_category: TransactionCategory):
+def save_transaction_category(
+    session: Session, transaction_category: TransactionCategory
+):
     """saves linked table to transaction and category"""
     session.add(transaction_category)
     return transaction_category

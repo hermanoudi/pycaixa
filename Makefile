@@ -13,7 +13,9 @@ ipython:
 	@.venv/bin/ipython
 
 test:
-	@.venv/bin/pytest -s -vv --forked
+	@.venv/bin/pytest -s --cov=mouracx -vv
+	@.venv/bin/coverage xml
+	@.venv/bin/coverage html
 
 lint:
 	@.venv/bin/pflake8
@@ -23,7 +25,9 @@ fmt:
 	@.venv/bin/black mouracx tests integration
 
 watch:
-	ls **/*.py | entr pytest --forked
+	ls **/*.py | entr pytest --cov=mouracx
+	@.venv/bin/coverage xml
+	@.venv/bin/coverage html
 
 clean:            ## Clean unused files.
 	@find ./ -name '*.pyc' -exec rm -f {} \;

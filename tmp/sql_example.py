@@ -13,7 +13,8 @@ con = sqlite3.connect("sql_example.db")
 # """
 
 query = """\
-    SELECT id, transaction_at, transaction_description, value_transaction, type_transaction
+    SELECT id, transaction_at, transaction_description,
+      value_transaction, type_transaction
     FROM movement
     WHERE type_transaction = 'Pagamento'
 """
@@ -26,8 +27,10 @@ for row in result:
 
 
 # insert = """\
-#     INSERT INTO movement (transaction_description, transaction_at, value_transaction, type_transaction)
-#            VALUES ('Pagamento Financiamento', '2024-09-04', -200.05, 'Pagamento')
+#     INSERT INTO movement (transaction_description, transaction_at,
+# value_transaction, type_transaction)
+#            VALUES ('Pagamento Financiamento', '2024-09-04', -200.05,
+# 'Pagamento')
 # """
 
 # con.execute(insert)
