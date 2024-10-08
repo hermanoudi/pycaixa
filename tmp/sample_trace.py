@@ -17,5 +17,3 @@ if __name__ == "__main__":
 
 # comando
 # python -m trace --count -C . sample_trace.py
-
-
